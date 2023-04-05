@@ -1,0 +1,68 @@
+spring:
+  application:
+    name: product-service
+  profiles:
+    active: localhost
+  main:
+    allow-bean-definition-overriding: true
+info:
+  component: Product Service
+
+server:
+  port: 2424
+logging:
+  level:
+    root: off
+    com.tech: debug
+
+---
+
+spring:
+  profiles: localhost
+  cloud:
+    config:
+      uri: http://localhost:8888
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+        default_schema: stock_management
+  datasource:
+    url: "jdbc:postgresql://postgres:5432/stock_management"
+    username: postgres
+    password: 123456
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${random.uuid}
+  client:
+    service-url:
+      default-zone: http://localhost:8761/eureka/
+
+---
+
+spring:
+  profiles: stage
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+        default_schema: stock_management
+  datasource:
+    url: "jdbc:postgresql://postgres:5432/stock_management"
+    username: postgres
+    password: 123456
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${random.uuid}
+    lease-renewal-interval-in-seconds: 10
+    prefer-ip-address: true
+  client:
+    service-url:
+      default-zone: http://eureka-server:8761/eureka
+
